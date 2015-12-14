@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>電子報產生器</title>
+
+  <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
+  <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+      <div class="mdl-layout__header-row">
+        <span class="mdl-layout-title">
+          資訊服務團隊 電子報產生器
+        </span>
+      </div>
+    </header>
+    <main class="mdl-layout__content">
+      <div class="page-content">
+        <div class="mdl-card mdl-shadow--2dp Main">
+          <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">自動套用電子報樣板</h2>
+          </div>
+          <div class="mdl-card__supporting-text">
+            <p>請確認 Google doc 裡：</p>
+            <ul>
+              <li>電子報標題已經套用「Title」格式</li>
+              <li>Google doc 已經發佈成網頁</li>
+            </ul>
+            <form action="#" id="form">
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="publish-url">
+                <label class="mdl-textfield__label" for="publish-url">電子報發佈網址</label>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (() => {
+      'use strict'
+
+      let $form = document.querySelector('#form')
+      let $input = document.querySelector('#publish-url')
+
+      $form.addEventListener('submit', (e) => {
+        e.preventDefault()
+        check()
+      })
+      $input.addEventListener('paste', () => {
+        // Paste event is fired before the input is actually populated,
+        // thus delay a bit before invoking check()
+        //
+        setTimeout(check, 0)
+      })
+
+      function check() {
+        // Format:
+        // https://docs.google.com/document/d/<DOC_ID>/pub
+
+        let url = $input.value
+        let match = url.match(/https:\/\/docs\.google\.com\/document\/d\/(.+)\/pub/)
+
+        if(!match){
+          alert('請貼上「發佈到網路」的 URL (https://docs.google.com/document/d/xxxxx/pub) 喔！')
+          return
+        }
+
+        location.href = match[1]
+      }
+
+    })()
+  </script>
+</body>
+</html>

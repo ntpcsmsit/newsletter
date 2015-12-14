@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>電子報產生器</title>
+
+  <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
+  <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+      <div class="mdl-layout__header-row">
+        <span class="mdl-layout-title">
+          資訊服務團隊 電子報產生器
+        </span>
+      </div>
+    </header>
+    <main class="mdl-layout__content">
+      <div class="mdl-card mdl-shadow--2dp Main">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">操作步驟</h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+          <a href="#" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">第一步：下載郵件內文</a>
+
+          <hr>
+
+          <a id="new-mail" href="#" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">第二步：建立新郵件</a>
+
+          <hr>
+
+          <h6>第三步：將郵件內文插入郵件後寄出</h6>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (() => {
+      'use strict'
+
+      const DOC_ID = location.pathname.slice(1)
+      const STYLES_TO_ADD = `
+        body {background: #eee;}
+        .Container {background: #fff; max-width: 560px; margin: 16px auto; padding: 20px;}
+      `
+
+
+      fetch(`https://docs.google.com/document/d/${DOC_ID}/pub?embedded=true`)
+      .then(resp => resp.text())
+      .then(data => {
+        let processedData = processMailBody(data)
+
+        setSubject(processedData.subject)
+        setBody(processedData.body)
+      }).catch(err => {
+        console.error(err.stack)
+      })
+
+      function processMailBody(html) {
+        let parser = new DOMParser()
+        let doc = parser.parseFromString(html, 'text/html')
+
+        // Fetch subject from title element and remove title
+        //
+        let $title = doc.querySelector('.title')
+        $title.parentNode.removeChild($title)
+
+        // Wrap content inside <body> with a div
+        //
+        let $contentWrapper = doc.createElement('div')
+
+        Array.prototype.forEach.call(doc.querySelectorAll('body > *'), ($elem) => {
+          $contentWrapper.appendChild($elem)
+        })
+
+        $contentWrapper.classList.add('Container')
+        doc.body.appendChild($contentWrapper)
+
+        return {
+          subject: $title.innerText.replace('\n', ' '),
+          body: doc.documentElement.outerHTML
+        }
+      }
+
+      function setSubject(subject) {
+        let title = `產生信件：${subject}`
+        document.title = document.querySelector('.mdl-layout-title').innerText = title
+        document.querySelector('#new-mail').href = `mailto:a@bb.com?subject=${subject}`
+      }
+
+      function setBody(body) {
+        console.log('BODY', processedData.body)
+      }
+
+    })()
+  </script>
+</body>
+</html>
