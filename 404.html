@@ -59,13 +59,15 @@
       //
       fetch(`https://docs.google.com/document/d/${DOC_ID}/pub?embedded=true`)
       .then(resp => resp.text())
+      .catch(err => {
+        alert('Google doc 處理錯誤，請確定：\n1. Google doc 有發佈成 HTML\n2. 有提供正確的 Google doc 發佈網址')
+      })
       .then(data => {
         let processedData = processMailBody(data)
-
         setSubject(processedData.subject)
         setBody(processedData.body)
-      }).catch(err => {
-        alert('Google doc 處理錯誤，請確定：\n1. Google doc 有發佈成 HTML\n2. 有提供正確的 Google doc 發佈網址')
+      })
+      .catch(err => {
         console.error(err.stack)
       })
 
