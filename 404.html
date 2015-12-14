@@ -42,12 +42,12 @@
     (() => {
       'use strict'
 
-      const DOC_ID = location.pathname.slice(1)
       const STYLES_TO_ADD = `
         body {background: #eee;}
         .Container {background: #fff; max-width: 560px; margin: 16px auto; padding: 20px;}
       `
 
+      const DOC_ID = location.href.match(/\/([^/]+)$/)[1]
 
       fetch(`https://docs.google.com/document/d/${DOC_ID}/pub?embedded=true`)
       .then(resp => resp.text())
