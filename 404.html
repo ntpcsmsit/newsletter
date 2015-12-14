@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>電子報產生器</title>
+  <title>載入中⋯⋯</title>
 
   <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
   <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
@@ -14,7 +14,7 @@
     <header class="mdl-layout__header">
       <div class="mdl-layout__header-row">
         <span class="mdl-layout-title">
-          資訊服務團隊 電子報產生器
+          載入中⋯⋯
         </span>
       </div>
     </header>
@@ -24,7 +24,7 @@
           <h2 class="mdl-card__title-text">操作步驟</h2>
         </div>
         <div class="mdl-card__supporting-text">
-          <a href="#" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">第一步：下載郵件內文</a>
+          <a id="download-body" href="#" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">第一步：下載郵件內文</a>
 
           <hr>
 
@@ -60,6 +60,13 @@
         console.error(err.stack)
       })
 
+      // Given the HTML of the newsletter on Google doc,
+      // do the following process and return the processed body & subject:
+      //
+      // 1. Remove <div class="title">ooo</div>. Take its content as email subject.
+      // 2. Wrap all contents inside <body> with <div class="Container">.
+      // 3. Adds STYLES_TO_ADD to <head>
+      //
       function processMailBody(html) {
         let parser = new DOMParser()
         let doc = parser.parseFromString(html, 'text/html')
@@ -80,6 +87,12 @@
         $contentWrapper.classList.add('Container')
         doc.body.appendChild($contentWrapper)
 
+        // Add STYLES_TO_ADD to <head>
+        //
+        let $style = doc.createElement('style')
+        $style.innerHTML = STYLES_TO_ADD
+        doc.head.appendChild($style)
+
         return {
           subject: $title.innerText.replace('\n', ' '),
           body: doc.documentElement.outerHTML
@@ -90,10 +103,14 @@
         let title = `產生信件：${subject}`
         document.title = document.querySelector('.mdl-layout-title').innerText = title
         document.querySelector('#new-mail').href = `mailto:a@bb.com?subject=${subject}`
+
       }
 
       function setBody(body) {
-        console.log('BODY', processedData.body)
+        let $downloadButton = document.querySelector('#download-body')
+
+        $downloadButton.download = "email.html"
+        $downloadButton.href = URL.createObjectURL(new Blob([body], {type: 'text/html'}))
       }
 
     })()
