@@ -48,7 +48,8 @@
       const INLINE_STYLES = {
         'body': 'background: #ffd99c url(https://ntpcsmsit.github.io/newsletter/images/cute-bg.png); font-family: "微軟正黑體", "Microsoft JhengHei", sans-serif; max-width: 100%; padding: 0;',
         '.Container': 'background: #fff; max-width: 600px; margin: 40px auto; padding: 24px;',
-        '.Container-Header': 'width: 100%; margin: -24px -24px 24px -24px', // Negative margin should match .Container padding
+        '.Header': 'margin: -24px -24px 24px -24px', // Negative margin should match .Container padding
+        '.Header-Image': 'width: 100%',
       }
 
       const DOC_ID = location.href.match(/\/([^/]+)$/)[1]
@@ -108,9 +109,18 @@
           $img.setAttribute('style', 'max-width: 100%')
         })
 
+        // Add header image
+        let $header = doc.createElement('div')
+        $header.classList.add('Header')
+        let $headerImg = new Image
+        $headerImg.src = 'https://ntpcsmsit.github.io/newsletter/images/cute-header@2x.png'
+        $headerImg.classList.add('Header-Image')
+        $header.appendChild($headerImg)
+
         // Wrap content inside <body> with a div
         //
         let $contentWrapper = doc.createElement('div')
+        $contentWrapper.appendChild($header)
 
         forEach('body > *', $elem => {
           $contentWrapper.appendChild($elem)
@@ -119,10 +129,6 @@
         $contentWrapper.classList.add('Container')
         doc.body.appendChild($contentWrapper)
 
-        // Add header image
-        let $header = new Image
-        $header.classList.add('Container-Header')
-        $header.src = 'https://ntpcsmsit.github.io/newsletter/images/cute-header@2x.png'
 
         // Apply inline styles to elements
         //
