@@ -91,6 +91,22 @@
         let $title = doc.querySelector('.title')
         $title.parentNode.removeChild($title)
 
+        // Replace empty <p>s with <br>s
+        //
+        forEach('p', $p => {
+          if($p.textContent === '' && $p.querySelector('img') === null){
+            $p.parentNode.replaceChild(doc.createElement('br'), $p)
+          }
+        })
+
+        // Remove all <span>s that crops <img>s
+        //
+        forEach('span > img', $img => {
+          let $span = $img.parentNode
+          $span.parentNode.replaceChild($img, $span)
+          $img.setAttribute('style', 'max-width: 100%')
+        })
+
         // Wrap content inside <body> with a div
         //
         let $contentWrapper = doc.createElement('div')
