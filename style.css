@@ -5,3 +5,19 @@ main {
 .Main {
   margin: 16px auto;
 }
+
+.Card {
+  min-height: auto;
+}
+
+.Card-Input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid #999;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.Card-Image {
+  width: 100%;
+}

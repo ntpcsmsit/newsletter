@@ -20,22 +20,45 @@
       </div>
     </header>
     <main class="mdl-layout__content">
-      <div class="mdl-card mdl-shadow--2dp Main">
+      <div class="mdl-card mdl-shadow--2dp Main Card">
         <div class="mdl-card__title">
-          <h2 class="mdl-card__title-text">操作步驟</h2>
+          <h2 class="mdl-card__title-text">第一步：下載內文</h2>
         </div>
         <div class="mdl-card__supporting-text">
-          <a id="download-body" href="#" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">第一步：下載郵件內文</a>
-
-          <hr>
-
-          <a id="new-mail" href="#" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">第二步：建立新郵件</a>
-
-          <hr>
-
-          <h6>第三步：將郵件內文插入郵件後寄出</h6>
+          <a id="download-body" href="#" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">按這裡下載郵件內文</a>
         </div>
       </div>
+      <div class="mdl-card mdl-shadow--2dp Main">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">第二步：用信箋建立新郵件</h2>
+        </div>
+        <div class="mdl-card__media">
+          <img class="Card-Image" src="images/stationery.png" border="0" alt="">
+        </div>
+        <div class="mdl-card__supporting-text">
+          <p>
+            填入收件者、信件主旨：
+            <textarea class="Card-Input" id="subject"></textarea>
+          </p>
+
+          <p>
+            註：若先前沒有設定過電子報用的信箋（newsletter.html），請<a href="stationery.html" download="newsletter.html">下載信箋</a>後，放進 <a href="https://support.office.com/zh-tw/article/%E5%B0%87%E4%BF%A1%E7%AE%8B%E8%A4%87%E8%A3%BD%E5%88%B0%E5%85%B6%E4%BB%96%E9%9B%BB%E8%85%A6-ed5c64a0-cd2e-4311-bd52-b50922b5ebb4">Outlook 信箋資料夾</a>。
+          </p>
+        </div>
+      </div>
+      <div class="mdl-card mdl-shadow--2dp Main">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">第三步：插入內文</h2>
+        </div>
+        <div class="mdl-card__media">
+          <img class="Card-Image" src="images/select-append.png" border="0" alt="">
+          <img class="Card-Image" src="images/insert-as-text.png" border="0" alt="">
+        </div>
+        <div class="mdl-card__supporting-text">
+          然後寄出～
+        </div>
+      </div>
+
     </main>
   </div>
 
@@ -46,10 +69,7 @@
       // Inline styles to apply on the email body
       //
       const INLINE_STYLES = {
-        'body': 'background: #ffd99c url(https://ntpcsmsit.github.io/newsletter/images/cute-bg.png); font-family: "微軟正黑體", "Microsoft JhengHei", sans-serif; max-width: 100%; padding: 0;',
-        '.Container': 'background: #fff; max-width: 600px; margin: 40px auto; padding: 24px;',
-        '.Header': 'margin: -24px -24px 24px -24px', // Negative margin should match .Container padding
-        '.Header-Image': 'width: 100%',
+        'img': 'max-width: 100%; width: 100%'
       }
 
       const DOC_ID = location.href.match(/\/([^/]+)$/)[1]
@@ -80,9 +100,9 @@
       // do the following process and return the processed body & subject:
       //
       // 1. Remove <div class="title">ooo</div>. Take its content as email subject.
-      // 2. Wrap all contents inside <body> with <div class="Container">.
-      // 3. Replaces empty <p><span></span></p> to <br>
-      // 4. Other styling stuff
+      // 2. Replaces empty <p><span></span></p> to <br>
+      // 3. Other styling stuff
+      // 4. Output all contents inside <body>
       //
       function processMailBody(html) {
         let parser = new DOMParser()
@@ -92,6 +112,16 @@
         //
         let $title = doc.querySelector('.title')
         $title.parentNode.removeChild($title)
+
+        // Apply inline styles to elements
+        //
+        Object.keys(INLINE_STYLES).forEach(selector => {
+          let style = INLINE_STYLES[selector]
+
+          forEach(selector, $elem => {
+            $elem.setAttribute('style', style)
+          })
+        })
 
         // Replace empty <p>s with <br>s
         //
@@ -106,38 +136,6 @@
         forEach('span > img', $img => {
           let $span = $img.parentNode
           $span.parentNode.replaceChild($img, $span)
-          $img.setAttribute('style', 'max-width: 100%')
-        })
-
-        // Add header image
-        let $header = doc.createElement('div')
-        $header.classList.add('Header')
-        let $headerImg = new Image
-        $headerImg.src = 'https://ntpcsmsit.github.io/newsletter/images/cute-header@2x.png'
-        $headerImg.classList.add('Header-Image')
-        $header.appendChild($headerImg)
-
-        // Wrap content inside <body> with a div
-        //
-        let $contentWrapper = doc.createElement('div')
-        $contentWrapper.appendChild($header)
-
-        forEach('body > *', $elem => {
-          $contentWrapper.appendChild($elem)
-        })
-
-        $contentWrapper.classList.add('Container')
-        doc.body.appendChild($contentWrapper)
-
-
-        // Apply inline styles to elements
-        //
-        Object.keys(INLINE_STYLES).forEach(selector => {
-          let style = INLINE_STYLES[selector]
-
-          forEach(selector, $elem => {
-            $elem.setAttribute('style', style)
-          })
         })
 
         return {
@@ -153,7 +151,7 @@
       function setSubject(subject) {
         let title = `產生信件：${subject}`
         document.title = document.querySelector('.mdl-layout-title').innerText = title
-        document.querySelector('#new-mail').href = `mailto:a@bb.com?subject=${subject}`
+        document.querySelector('#subject').innerHTML = subject
 
       }
 
@@ -163,6 +161,10 @@
         $downloadButton.download = "email.html"
         $downloadButton.href = URL.createObjectURL(new Blob([body], {type: 'text/html'}))
       }
+
+      document.querySelector('#subject').addEventListener('focus', () => {
+        document.querySelector('#subject').select()
+      })
 
     })()
   </script>
