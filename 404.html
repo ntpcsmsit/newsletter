@@ -95,7 +95,7 @@
         //
         let $contentWrapper = doc.createElement('div')
 
-        Array.prototype.forEach.call(doc.querySelectorAll('body > *'), ($elem) => {
+        forEach('body > *', $elem => {
           $contentWrapper.appendChild($elem)
         })
 
@@ -109,17 +109,21 @@
 
         // Apply inline styles to elements
         //
-        Object.keys(INLINE_STYLES).forEach((selector) => {
+        Object.keys(INLINE_STYLES).forEach(selector => {
           let style = INLINE_STYLES[selector]
 
-          Array.prototype.forEach.call(doc.querySelectorAll(selector), ($elem) => {
-            $elem.style = style
+          forEach(selector, $elem => {
+            $elem.setAttribute('style', style)
           })
         })
 
         return {
           subject: $title.innerText.replace('\n', ' '),
           body: doc.documentElement.outerHTML
+        }
+
+        function forEach(selector, func) {
+          return Array.prototype.forEach.call(doc.querySelectorAll(selector), func);
         }
       }
 
