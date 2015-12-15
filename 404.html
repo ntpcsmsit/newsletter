@@ -46,9 +46,9 @@
       // Inline styles to apply on the email body
       //
       const INLINE_STYLES = {
-        'body': 'background: #ffd99c url(https://ntpcsmsit.github.io/newsletter/images/cute-bg.png); font-family: "微軟正黑體", "Microsoft JhengHei", sans-serif;',
-        '.Container': 'background: #fff; max-width: 600px; margin: 20px auto; padding: 24px;',
-        '.Container-Header': 'width: 100%; margin: -24px -24px 24px -24px' // Negative margin should match .Container padding
+        'body': 'background: #ffd99c url(https://ntpcsmsit.github.io/newsletter/images/cute-bg.png); font-family: "微軟正黑體", "Microsoft JhengHei", sans-serif; max-width: 100%; padding: 0;',
+        '.Container': 'background: #fff; max-width: 600px; margin: 40px auto; padding: 24px;',
+        '.Container-Header': 'width: 100%; margin: -24px -24px 24px -24px', // Negative margin should match .Container padding
       }
 
       const DOC_ID = location.href.match(/\/([^/]+)$/)[1]
@@ -80,7 +80,8 @@
       //
       // 1. Remove <div class="title">ooo</div>. Take its content as email subject.
       // 2. Wrap all contents inside <body> with <div class="Container">.
-      // 3. Adds STYLES_TO_ADD to <head>
+      // 3. Replaces empty <p><span></span></p> to <br>
+      // 4. Other styling stuff
       //
       function processMailBody(html) {
         let parser = new DOMParser()
