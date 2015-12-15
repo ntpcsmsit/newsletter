@@ -1,6 +1,6 @@
 (function(){
   var typeChecks = [
-    typeof fetch, typeof DOMParser
+    typeof fetch, typeof DOMParser, typeof Object.keys
   ];
 
   var i;

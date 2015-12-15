@@ -43,10 +43,13 @@
     (() => {
       'use strict'
 
-      const STYLES_TO_ADD = `
-        body {background: #eee;}
-        .Container {background: #fff; max-width: 560px; margin: 16px auto; padding: 20px;}
-      `
+      // Inline styles to apply on the email body
+      //
+      const INLINE_STYLES = {
+        'body': 'background: #ffd99c url(https://ntpcsmsit.github.io/newsletter/images/cute-bg.png); font-family: "微軟正黑體", "Microsoft JhengHei", sans-serif;',
+        '.Container': 'background: #fff; max-width: 600px; margin: 20px auto; padding: 24px;',
+        '.Container-Header': 'width: 100%; margin: -24px -24px 24px -24px' // Negative margin should match .Container padding
+      }
 
       const DOC_ID = location.href.match(/\/([^/]+)$/)[1]
       if(!DOC_ID){
@@ -99,11 +102,20 @@
         $contentWrapper.classList.add('Container')
         doc.body.appendChild($contentWrapper)
 
-        // Add STYLES_TO_ADD to <head>
+        // Add header image
+        $header = new Image
+        $header.className.add('Container-Header')
+        $header.src = 'https://ntpcsmsit.github.io/newsletter/images/cute-header@2x.png'
+
+        // Apply inline styles to elements
         //
-        let $style = doc.createElement('style')
-        $style.innerHTML = STYLES_TO_ADD
-        doc.head.appendChild($style)
+        Object.keys(INLINE_STYLES).forEach((selector) => {
+          let style = INLINE_STYLES[selector]
+
+          Array.prototype.forEach.call(doc.querySelectorAll(selector), ($elem) => {
+            $elem.style = style
+          })
+        })
 
         return {
           subject: $title.innerText.replace('\n', ' '),
