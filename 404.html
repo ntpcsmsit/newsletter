@@ -69,7 +69,7 @@
       // Inline styles to apply on the email body
       //
       const INLINE_STYLES = {
-        'img': 'max-width: 100%; width: 100%'
+        // 'img': 'max-width: 100%; width: 100%'
       }
 
       const DOC_ID = location.href.match(/\/([^/]+)$/)[1]
@@ -135,6 +135,7 @@
         //
         forEach('span > img', $img => {
           let $span = $img.parentNode
+          $img.setAttribute('width', '100%')
           $span.parentNode.replaceChild($img, $span)
         })
 
