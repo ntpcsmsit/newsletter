@@ -1,13 +1,14 @@
-main {
-  background: #eee;
-}
-
 .Main {
-  margin: 16px auto;
+  background: #eee;
+  padding: 16px 0;
 }
 
 .Card {
   min-height: auto;
+  width: 600px;
+  margin: 0 auto 16px;
+  will-change: transform, opacity;
+  animation: showup .3s cubic-bezier(0, 0, 0.23, 0.99);
 }
 
 .Card-Input {
@@ -20,4 +21,34 @@ main {
 
 .Card-Image {
   width: 100%;
+}
+
+.Spinner {
+  margin: 0 auto;
+  width: 28px;
+  display: none;
+}
+
+.is-loading .Card {
+  display: none;
+}
+
+.is-loading .Spinner {
+  display: block;
+}
+
+.mdl-card__supporting-text {
+  width: auto;
+}
+
+@keyframes showup {
+  0% {
+    transform: translateY(48px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

@@ -19,30 +19,28 @@
         </span>
       </div>
     </header>
-    <main class="mdl-layout__content">
-      <div class="mdl-card mdl-shadow--2dp Main Card">
+    <main class="mdl-layout__content Main is-loading">
+      <div class="Spinner">
+        <div class="mdl-spinner mdl-js-spinner is-active"></div>
+      </div>
+      <div class="mdl-card mdl-shadow--2dp Card">
         <div class="mdl-card__title">
-          <h2 class="mdl-card__title-text">第一步：在公務雲寫新郵件</h2>
+          <h2 class="mdl-card__title-text">在公務雲寫新郵件</h2>
         </div>
         <div class="mdl-card__supporting-text">
           <p>
-            信件主旨
-            <textarea class="Card-Input" id="subject"></textarea>
+            複製貼上信件主旨
+            <input class="Card-Input" id="subject" type="text">
+          </p>
+          <div class="mdl-card__media">
+            <img class="Card-Image" src="images/html.png" border="0" alt="">
+          </div>
+          <p>
+            請點擊上圖的按鈕後，將信件內容用下面的內容覆蓋
+            <textarea class="Card-Input" id="body"></textarea>
           </p>
         </div>
       </div>
-      <div class="mdl-card mdl-shadow--2dp Main">
-        <div class="mdl-card__title">
-          <h2 class="mdl-card__title-text">第二步：複製貼上 HTML</h2>
-        </div>
-        <div class="mdl-card__media">
-          <img class="Card-Image" src="images/stationery.png" border="0" alt="">
-        </div>
-        <div class="mdl-card__supporting-text">
-          <textarea class="Card-Input" id="body"></textarea>
-        </div>
-      </div>
-
     </main>
   </div>
 
@@ -50,13 +48,31 @@
     (() => {
       'use strict'
 
-      // Inline styles to apply on the email body
-      //
+      /**
+        Inline styles to apply on the email body.
+
+        Note: Images must have
+        (1) width attribute with 'fixed' width (without "px"!) to make Outlook happy, and
+        (2) Inline-style width CSS property with 'fixed' width (with "px") to make NTPC webmail happy.
+
+        Inline style & HTML attribute combinations that DOES NOT WORK on Outlook but
+        WORKS on NTPC webmail:
+
+        * Inline style "width: 100%; max-width: OOOpx" & width="100%"
+        * Inline style "width: OOOpx;"                 & width="100%"
+        * Inline style "width: OOOpx;"                 & No HTML width attribute
+        * width="100%"
+
+        Inline style & HTML attribute combinations that DOES NOT WORK on NTPC webmail:
+
+        * width="OOO"
+
+      **/
       const INLINE_STYLES = {
         'body': "background: #ffd99c url(https://ntpcsmsit.github.io/newsletter/images/cute-bg.png); font-family: '微軟正黑體', 'Microsoft JhengHei', sans-serif; padding: 40px 0; width: auto; max-width: none;",
-        '.Header-Image': 'vertical-align: bottom; width: 100%;',
+        '.Header-Image': 'vertical-align: bottom; width: 600px;',
         '.Content': 'padding: 24px; background-color: #ffffff; box-sizing: border-box;',
-        '.Content img': 'max-width: 600px; width: 100%;',
+        '.Content img': 'width: 552px;',
       }
 
       const DOC_ID = location.href.match(/\/([^/]+)$/)[1]
@@ -78,6 +94,7 @@
         let processedData = processMailBody(data)
         setSubject(processedData.subject)
         setBody(processedData.body)
+        setFinishLoading()
       })
       .catch(err => {
         console.error(err.stack)
@@ -112,13 +129,13 @@
             <tr>
               <td></td>
               <td width="600">
-                <img class="Header-Image" src="https://ntpcsmsit.github.io/newsletter/images/cute-header@2x.png" width="100%">
+                <img class="Header-Image" src="https://ntpcsmsit.github.io/newsletter/images/cute-header@2x.png" width="600">
               </td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td class="Content" width="600"></td>
+              <td class="Content" width="552"></td>
               <td></td>
             </tr>
           </table>
@@ -160,7 +177,7 @@
         //
         forEach('span > img', $img => {
           let $span = $img.parentNode
-          $img.setAttribute('width', '100%')
+          $img.setAttribute('width', '552')
           $span.parentNode.replaceChild($img, $span)
         })
 
@@ -177,12 +194,17 @@
       function setSubject(subject) {
         let title = `產生信件：${subject}`
         document.title = document.querySelector('.mdl-layout-title').innerText = title
-        document.querySelector('#subject').innerHTML = subject
+        document.querySelector('#subject').value = subject
 
       }
 
       function setBody(body) {
         document.querySelector('#body').innerHTML = body
+      }
+
+      function setFinishLoading() {
+        document.querySelector('.Main').classList.remove('is-loading')
+        document.querySelector('.Spinner .is-active').classList.remove('is-active')
       }
 
       Array.prototype.forEach.call(document.querySelectorAll('.Card-Input'), ($elem) => {
