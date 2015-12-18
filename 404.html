@@ -69,7 +69,10 @@
       // Inline styles to apply on the email body
       //
       const INLINE_STYLES = {
-        // 'img': 'max-width: 100%; width: 100%'
+        'body': "background: #ffd99c url(https://ntpcsmsit.github.io/newsletter/images/cute-bg.png); font-family: '微軟正黑體', 'Microsoft JhengHei', sans-serif; padding: 40px 0; width: auto; max-width: none;",
+        '.Header-Image': 'vertical-align: bottom; width: 100%;',
+        '.Content': 'padding: 24px; background-color: #ffffff; box-sizing: border-box;',
+        '.Content img': 'max-width: 600px; width: 100%;',
       }
 
       const DOC_ID = location.href.match(/\/([^/]+)$/)[1]
@@ -113,6 +116,31 @@
         let $title = doc.querySelector('.title')
         $title.parentNode.removeChild($title)
 
+        // Move the body content into table.
+        //
+        // Table structure ref:
+        // http://stackoverflow.com/questions/2426072/is-there-an-equivalent-of-css-max-width-that-works-in-html-emails
+        //
+        let contentHTML = doc.querySelector('body').innerHTML
+        doc.querySelector('body').innerHTML = `
+          <style>p {margin: 0}</style>
+          <table border="0" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+              <td></td>
+              <td width="600">
+                <img class="Header-Image" src="https://ntpcsmsit.github.io/newsletter/images/cute-header@2x.png" width="100%">
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="Content" width="600"></td>
+              <td></td>
+            </tr>
+          </table>
+        `
+        doc.querySelector('.Content').innerHTML = contentHTML
+
         // Apply inline styles to elements
         //
         Object.keys(INLINE_STYLES).forEach(selector => {
@@ -122,6 +150,19 @@
             $elem.setAttribute('style', style)
           })
         })
+
+        // Remove meta charset because NTPC web mail actually sends the email using big5
+        // and the meta tag confuses Outlook.
+        //
+        let $meta = doc.querySelector('meta')
+        $meta.parentNode.removeChild($meta)
+
+        // Move <style> into body because gmail removes the entire <head>.
+        //
+
+        let $headStyle = doc.querySelector('head > style')
+
+        doc.body.insertBefore($headStyle, doc.body.children[0])
 
         // Replace empty <p>s with <br>s
         //
