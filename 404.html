@@ -43,6 +43,14 @@
           </p>
         </div>
       </div>
+      <div class="mdl-card mdl-shadow--2dp Card">
+        <div class="mdl-card__supporting-text">
+          <p>
+            若想要看看信件寄出的樣子，可以在瀏覽器預覽信件。
+            <a id="preview" target="_blank" href="#" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect ">預覽信件</a>
+          </p>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -202,6 +210,8 @@
 
       function setBody(body) {
         document.querySelector('#body').innerHTML = body
+        let $previewButton = document.querySelector('#preview')
+        $previewButton.href = URL.createObjectURL(new Blob([body], {type: 'text/html'}))
       }
 
       function setFinishLoading() {

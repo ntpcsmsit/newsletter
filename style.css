@@ -41,6 +41,10 @@
   width: auto;
 }
 
+#preview {
+  float: right;
+}
+
 @keyframes showup {
   0% {
     transform: translateY(48px);
